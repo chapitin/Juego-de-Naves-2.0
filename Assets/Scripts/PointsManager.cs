@@ -2,13 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class PointsManager : MonoBehaviour
 {
     public const string pointsKey = "TIMES_POINTS";
+    public static int savedPoints;
 
     public static PointsManager instance;
-    public Text pointsText;
+    public TextMeshProUGUI pointsText;
 
     [SerializeField] private int currentScore = 0;
 
@@ -30,7 +32,7 @@ public class PointsManager : MonoBehaviour
         ComplexEnemy.OnDead += HandleEnemyDeath;
     }
 
- 
+
     private void HandleEnemyDeath(int points)
     {
         currentScore += points;
@@ -44,13 +46,17 @@ public class PointsManager : MonoBehaviour
 
     private void HandleSavePoints()
     {
-        int highestScore = PlayerPrefs.GetInt(pointsKey, 0);
-        
+        int highestScore = PlayerPrefs.GetInt(pointsKey);
+
 
         if (currentScore > highestScore)
         {
             PlayerPrefs.SetInt(pointsKey, currentScore);
-            PlayerPrefs.Save(); 
+            PlayerPrefs.Save();
         }
+
+        savedPoints = highestScore;
+
+        print("saved points in game: " + savedPoints);
     }
 }

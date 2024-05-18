@@ -178,7 +178,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f544c2435038740479dba711f2b3b429, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemyLayerName: EnemyPrefab
+  layerMaskToCheck:
+    serializedVersion: 2
+    m_Bits: 1664
   sidewaysSpeed: 50
   boostSpeed: 10
   fireRate: 0.2

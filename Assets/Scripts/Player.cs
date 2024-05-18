@@ -2,12 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using UnityEngine.SceneManagement;
 
-public class Player : MonoBehaviour
+public class Player : MonoBehaviour, Idamage
 {
+    public LayerMask layerMaskToCheck;
+
     //layers
-    public string enemyLayerName = "Enemy";
-    private int enemyLayer;
+    //public string enemyLayerName = "Enemy";
+    //private int enemyLayer;
 
     //public values
     public float sidewaysSpeed = 5f;
@@ -52,7 +55,8 @@ public class Player : MonoBehaviour
     void Start()
     {
         mySource = this.GetComponent<AudioSource>();
-        enemyLayer = LayerMask.NameToLayer(enemyLayerName);
+        currentLives = maxLives;
+        //enemyLayer = LayerMask.NameToLayer(enemyLayerName);
     }
 
     // Update is called once per frame
@@ -115,9 +119,12 @@ public class Player : MonoBehaviour
     {
           if (Input.GetKey(KeyCode.Space) && (Time.time - lastShot) >= fireRate)
         {
-            Instantiate(LaserPrefab,
+            GameObject go = Instantiate(LaserPrefab,
                 LaserSpawnPoint.position,
                 this.transform.rotation);
+
+
+                go.GetComponent<Laser>().Init(true);
 
                 lastShot = Time.time;
 
@@ -125,25 +132,43 @@ public class Player : MonoBehaviour
 
                OnShoot?.Invoke();
 
-               print("shot working");
+               //print("shot working");
 
 
         }
     }
 
-    private void OnCollisionEnter(Collision collision)
-    {
-        int collisionLayer = collision.gameObject.layer;
+    // private void OnCollisionEnter(Collision collision)
+    // {
+    //     int collisionLayer = collision.gameObject.layer;
 
-        if(!isInvincible && collisionLayer == enemyLayer)
+    //     //if(!isInvincible && collisionLayer == enemyLayer)
+    //     //{
+    //         //Damage();
+    //         print("Your Lives: " + currentLives);
+
+
+    //     //}
+
+    //     print("hay colision");
+    // }
+
+    private void OnTriggerEnter(Collider collider)
+    {
+      //Debug.Log("trigger working");
+
+
+        if(!isInvincible && GameManager.IsInLayerMask(collider.gameObject, layerMaskToCheck))
         {
             Damage();
             print("Your Lives: " + currentLives);
 
 
         }
-
-        print("hay colision");
+        else
+        {
+          Debug.Log($"{isInvincible} {collider.gameObject.layer} {layerMaskToCheck}");
+        }
     }
 
     private void Damage()
@@ -153,9 +178,10 @@ public class Player : MonoBehaviour
 
        if (currentLives <= 0)
        {
-            print("Mission Failed");
+            //print("Mission Failed");
             OnDead?.Invoke();
             Destroy(this.gameObject);
+            LoadNextScene();
        }
        else
        {
@@ -165,9 +191,20 @@ public class Player : MonoBehaviour
        }
     }
 
+    public void LoadNextScene()
+    {
+      SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+    }
+
     private IEnumerator EndInvincibility()
     {
-        yield return new WaitForSeconds(invincibilityDuration);
-        isInvincible = false;
+      yield return new WaitForSeconds(invincibilityDuration);
+      isInvincible = false;
     }
+
+    public void TakeDamage()
+    {
+      Damage();
+    }
+
 }

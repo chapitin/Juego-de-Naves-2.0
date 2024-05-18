@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-public class ComplexEnemy : MonoBehaviour
+public class ComplexEnemy : MonoBehaviour, Idamage
 {
 
     //public values
@@ -18,8 +18,10 @@ public class ComplexEnemy : MonoBehaviour
 
 
     //private
-    private float timeOffset;
+    public float timeOffset = 1;
     private float nextShootTime;
+
+    private AudioSource explosionAudio;
 
     // layers
     public string laserLayerName = "Laser";
@@ -45,6 +47,7 @@ public class ComplexEnemy : MonoBehaviour
     {
         laserLayer = LayerMask.NameToLayer(laserLayerName);
         playerLayer = LayerMask.NameToLayer(playerLayerName);
+        explosionAudio = this.GetComponent<AudioSource>();
     }
 
     private void Update()
@@ -66,10 +69,10 @@ private void Movement()
          * zigzagFrequency) * zigzagAmplitude, 0f, 0f);
 
 
-        Vector3 directionToPlayer = (playerTransform.position - 
+        Vector3 directionToPlayer = (playerTransform.position -
         transform.position).normalized;
 
-        Vector3 movement = (directionToPlayer + zigzagOffset).normalized 
+        Vector3 movement = (directionToPlayer + zigzagOffset).normalized
         * speed * Time.deltaTime;
 
         transform.Translate(movement);
@@ -84,22 +87,15 @@ private void Movement()
         }
     }
 
-    private void OnCollisionEnter(Collision collision)
-    {
-         if (collision.gameObject.layer == laserLayer || 
-            collision.gameObject.layer == playerLayer)
-        {
-            health--;           
-        }
-    }
-
     private void Death()
     {
-        if (health == 0)
+        if (health <= 0)
         {
             Instantiate(explosion, this.transform.position, Quaternion.identity);
             OnDead?.Invoke(points);
+            explosionAudio.Play();
             Destroy(this.gameObject);
+
         }
     }
 
@@ -108,20 +104,25 @@ private void Movement()
         if (Time.time >= nextShootTime)
         {
             Shoot();
-            nextShootTime = Time.time + 
+            nextShootTime = Time.time +
             UnityEngine.Random.Range(minShootInterval, maxShootInterval);
         }
-     
+
     }
 
     private void Shoot()
     {
-        Instantiate(EnemyLaserPrefab,
-        LaserSpawnPoint.position, 
+        GameObject go = Instantiate(EnemyLaserPrefab,
+        LaserSpawnPoint.position,
         this.transform.rotation);
+
+        go.GetComponent<Laser>().Init(false);
     }
 
+    public void TakeDamage()
+    {
+      health--;
+      Death();
+    }
 
 }
-
-

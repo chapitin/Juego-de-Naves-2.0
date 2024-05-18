@@ -4,14 +4,14 @@ using UnityEngine;
 
 public class EnemySpawner : MonoBehaviour
 {
-  public Transform playerTransform;  
+  public Transform playerTransform;
   public GameObject enemyPrefab;
   public GameObject complexEnemy;
   private GameObject obj = null;
   public float spawnRate = 2f;
   public Transform spawnPosition;
   public float deltaSpawnPosition;
-  
+
 
   public static EnemySpawner instance;
 
@@ -37,11 +37,11 @@ public class EnemySpawner : MonoBehaviour
     Vector3 randomPos = spawnPosition.position;
 
     randomPos.x += Random.Range(
-        randomPos.x - deltaSpawnPosition, 
+        randomPos.x - deltaSpawnPosition,
         randomPos.x + deltaSpawnPosition);
 
     randomPos.z += Random.Range(
-        randomPos.z - deltaSpawnPosition, 
+        randomPos.z - deltaSpawnPosition,
         randomPos.z + deltaSpawnPosition);
 
 
@@ -49,20 +49,23 @@ public class EnemySpawner : MonoBehaviour
 
     if (randomEnemy == 0)
     {
-      GameObject obj = Instantiate(enemyPrefab, 
-          randomPos, 
+      obj = Instantiate(enemyPrefab,
+          randomPos,
           Quaternion.identity);
+          obj.GetComponent<Enemy>().playerTransform = this.playerTransform;
+
     }
     else
     {
-      GameObject obj = Instantiate(complexEnemy, 
-        randomPos, 
+      obj = Instantiate(complexEnemy,
+        randomPos,
         Quaternion.identity);
+        obj.GetComponent<ComplexEnemy>().playerTransform = this.playerTransform;
+
     }
 
     if (obj != null)
     {
-      obj.GetComponent<Enemy>().playerTransform = this.playerTransform;
     }
   }
 

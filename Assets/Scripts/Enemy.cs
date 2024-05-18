@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-public class Enemy : MonoBehaviour
+public class Enemy : MonoBehaviour, Idamage
 {
     //public values
     public Transform playerTransform;
@@ -19,8 +19,8 @@ public class Enemy : MonoBehaviour
 
     public GameObject explosion;
 
+    private AudioSource explosionAudio;
 
-    
 
     public static Action<int> OnDead;
 
@@ -28,12 +28,13 @@ public class Enemy : MonoBehaviour
     {
         laserLayer = LayerMask.NameToLayer(laserLayerName);
         playerLayer = LayerMask.NameToLayer(playerLayerName);
+        explosionAudio = this.GetComponent<AudioSource>();
     }
 
     private void Update()
     {
         MoveToPlayer();
-     
+
     }
 
     public void MoveToPlayer()
@@ -44,7 +45,7 @@ public class Enemy : MonoBehaviour
         //     Debug.LogWarning("Player transform not assigned to enemy.");
         //     return;
         // }
-         
+
         GameObject playerObject = GameObject.FindGameObjectWithTag("Player");
         if (playerObject != null)
         {
@@ -70,13 +71,32 @@ public class Enemy : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-         if (collision.gameObject.layer == laserLayer || 
+         if (collision.gameObject.layer == laserLayer ||
             collision.gameObject.layer == playerLayer)
         {
             Instantiate(explosion, this.transform.position, Quaternion.identity);
             OnDead?.Invoke(points);
             Destroy(this.gameObject);
-            
+
         }
+    }
+
+    public void TakeDamage()
+    {
+      explosionAudio.Play();
+      Destroy(gameObject);
+      OnDead?.Invoke(points);
+      GameObject explosionInstance = Instantiate(explosion, this.transform.position, Quaternion.identity);
+
+
+    if (explosionInstance != null)
+    {
+        Debug.Log("Explosion instantiated successfully at " + explosionInstance.transform.position);
+    }
+    else
+    {
+        Debug.Log("Failed to instantiate explosion.");
+    }
+
     }
 }

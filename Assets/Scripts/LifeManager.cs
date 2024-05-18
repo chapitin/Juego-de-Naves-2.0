@@ -2,11 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class LifeManager : MonoBehaviour
 {
     public static LifeManager instance;
-    public Text livesText;
+    public TextMeshProUGUI livesText;
 
     private void Awake()
     {
@@ -24,9 +25,9 @@ public class LifeManager : MonoBehaviour
     {
         Player.OnDamage += UpdateUI;
     }
-    
+
     private void UpdateUI(int currentLives)
     {
-        livesText.text = currentLives.ToString();  
+        livesText.text = currentLives.ToString();
     }
 }

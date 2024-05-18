@@ -5,6 +5,8 @@ using UnityEngine;
 public class EnemyDestroyer : MonoBehaviour
 {
 
+    public LayerMask layerMaskToCheck;
+
     public string enemyLayerName = "Enemy";
     public string complexEnemyLayerName = "Complex Enemy";
     private int enemyLayer;
@@ -17,14 +19,15 @@ public class EnemyDestroyer : MonoBehaviour
         complexEnemyLayer = LayerMask.NameToLayer(complexEnemyLayerName);
     }
 
-    private void OnTriggerExit(Collider other)
-    {
-        int collisionLayer = other.gameObject.layer;
+    private void OnTriggerEnter(Collider collider)
+      {
 
-        if(collisionLayer == enemyLayer ||
-           collisionLayer == complexEnemyLayer)
-        {
-            Destroy(other.gameObject);
-        }
-    }
+
+          if(GameManager.IsInLayerMask(collider.gameObject, layerMaskToCheck))
+          {
+            print("clean up enemy");
+            //Destroy(gameObject);
+          }
+
+      }
 }
