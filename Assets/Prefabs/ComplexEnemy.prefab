@@ -69,7 +69,7 @@ MonoBehaviour:
   health: 2
   minShootInterval: 1
   maxShootInterval: 3
-  timeOffset: 1
+  timeOffset: 6
   laserLayerName: Laser
   playerLayerName: Player
   LaserSpawnPoint: {fileID: 8837777688469770815}

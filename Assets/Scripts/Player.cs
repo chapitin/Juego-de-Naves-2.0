@@ -19,6 +19,8 @@ public class Player : MonoBehaviour, Idamage
     public int maxLives = 3;
     public float invincibilityDuration = 2f;
 
+
+
     //private values
     private float lastShot;
     private int currentLives;
@@ -31,6 +33,7 @@ public class Player : MonoBehaviour, Idamage
     //objects
     public Transform LaserSpawnPoint;
     public GameObject LaserPrefab;
+
 
     //statics
     public static Action OnShoot;
